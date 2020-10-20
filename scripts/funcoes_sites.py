@@ -1,6 +1,8 @@
 import requests
+from scraping import Scraping
+from random import randint
 
-def cvm_gov(bs, url):
+def cvm_gov(bs):
     links_de_legislacao = []
     links_audiencias_publicas = []
     links_a_descobrir = []
@@ -11,20 +13,13 @@ def cvm_gov(bs, url):
             links_audiencias_publicas.append(a['href'])
         else:
             links_a_descobrir.append(a['href'])
-    print('\n\n')
-    print('***** LEGISLACAO *****')
-    print(links_de_legislacao)
-    print('\n\n\n\n')
-    print('***** AUDIENCIAS PÚBLICAS *****')
-    print(links_audiencias_publicas)
-    print('\n\n\n\n')
-    print('***** A DESCOBRIR *****')
-    for l in links_a_descobrir:
-        print(f'{l}\n')
+    
+    for link in links_de_legislacao:
+        #Scraping(link, lambda a: a).downloadPDF('./', f'{randint(0, 10000)}', 
+        pass
 
-
-def bcb_gov(bs, url):
+def bcb_gov(bs):
     pass
 
-def susep_gov(bs, url):
+def susep_gov(bs):
     pass

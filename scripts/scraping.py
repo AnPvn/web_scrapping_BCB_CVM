@@ -28,10 +28,10 @@ class Scraping:
     def scrap(self):
         return self.__bs
 
-    def downloadPDF(self, pasta, nome_arquivo):
+    def downloadPDF(self, pasta, nome_arquivo, url):
         try:
             with open(f'{pasta}\{nome_arquivo}.pdf', 'wb') as f:
-                f.write(requests.get(self.url, stream=True).content)
+                f.write(requests.get(url, stream=True).content)
             print('Arquivo salvo com sucesso!')
         except Exception:
             return None
