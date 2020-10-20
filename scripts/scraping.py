@@ -20,6 +20,10 @@ class Scraping:
             print('Ooops.. por favor, revise o link informado...')
             self.__bs = None        '''
         self.__bs = BeautifulSoup(urlopen(self.__url), mode)
+    
+    @property
+    def bs(self):
+        return self.__bs
 
     @property
     def url(self):
@@ -30,11 +34,11 @@ class Scraping:
 
     def downloadPDF(self, pasta, nome_arquivo, url):
         try:
-            with open(f'{pasta}\{nome_arquivo}.pdf', 'wb') as f:
+            with open(f'{pasta}/{nome_arquivo}.pdf', 'wb') as f:
                 f.write(requests.get(url, stream=True).content)
             print('Arquivo salvo com sucesso!')
         except Exception:
             return None
         
     def run(self):
-        self.__funcao(self.__bs, self.url)
+        self.__funcao(self.__bs, self.__url)
