@@ -4,7 +4,6 @@ from random import randint
 
 from time import sleep
 
-# existem páginas que não possuem pdfs para baixar, existindo apenas .doc?
 def cvm_gov(bs, url):
     endereco_principal = 'http://cvm.gov.br'
     id = 0
@@ -13,7 +12,7 @@ def cvm_gov(bs, url):
             scrap = Scraping(endereco_principal+link_primario['href'], None)
             for link_secundario in scrap.bs.find_all('a'): # procurando_link_do_pdf
                 try:
-                    if link_secundario['title'] == 'download': #and '.pdf' in link_secundario['href']:
+                    if link_secundario['title'] == 'download' and '.pdf' in link_secundario['href']:
                         id+=1
                         address = endereco_principal+link_secundario['href']
                         scrap.downloadPDF('./pdfs', f'{id}', address)

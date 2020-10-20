@@ -11,7 +11,7 @@ def add(url, funcao):
     return Scraping(url, funcao)
 
 CVM = add('http://www.cvm.gov.br/legislacao/index.html?numero=&lastNameShow=&lastName=&filtro=todos&dataInicio=&dataFim=&buscado=false&contCategoriasCheck=7', cvm_gov)
-BCB = add('https://www.bcb.gov.br/estabilidadefinanceira/buscanormas?conteudo=9l7qrtaf4fwn65', bcb_gov)
+BCB = add('https://www.bcb.gov.br/estabilidadefinanceira/buscanormas?dataInicioBusca=17%2F10%2F2020&dataFimBusca=20%2F10%2F2020&tipoDocumento=Todos', bcb_gov)
 SUSEP = add('https://www2.susep.gov.br/safe/bnportal/internet/pt-BR/news', susep_gov)
 
 if __name__ == '__main__':
