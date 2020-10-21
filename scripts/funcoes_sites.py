@@ -5,6 +5,7 @@ from time import sleep
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.common.keys import Keys
 
 def cvm_gov(bs, url):
     endereco_principal = 'http://cvm.gov.br'
@@ -23,32 +24,21 @@ def cvm_gov(bs, url):
                     pass
 
 def bcb_gov(bs, url): # uso do selenium é necessário uma vez que as informações desejadas do site são exibidas após o carregamento do javascript (usam angular js, as informações necessárias estão na tag <app-root>)
-    #endereco_principal = 'https://www.bcb.gov.br/'
-    
     driver = webdriver.PhantomJS()
-    #driver = webdriver.Chrome()
     driver.get(url)
-    #print(driver.page_source)
-    #print(driver.find_elements_by_tag_name('a'))
-
-    #.click() clica no elemento!!
     i=0
-    for link in driver.find_elements_by_tag_name('a'):
-        i+=1
-        try:
-            href = link.get_attribute('href')
-            if 'estabilidadefinanceira/exibenormativo?' in href:
-                print(f'{i} - {href}')
-                driver.get(href)
-                driver.get_screenshot_as_png()
-
-            driver.get(url)
-        except TypeError:
-            pass
-        except NoSuchElementException:
-            pass
-        except StaleElementReferenceException:
-            pass
+    links = driver.find_elements_by_tag_name('a')
+    for link in links:
+        href = link.get_attribute('href')
+        if href != None and 'estabilidadefinanceira/exibenormativo?' in href:
+            i+=1
+            print(f'{i} - {href}')
+            pagina = webdriver.PhantomJS()
+            pagina.get(url)
+            print(pagina.page_source)
+            print('\n\n\n')
+            pagina.quit()
+    driver.quit()
 
 def susep_gov(bs, url):
     pass
