@@ -16,4 +16,5 @@ SUSEP = add('https://www2.susep.gov.br/safe/bnportal/internet/pt-BR/news', susep
 
 if __name__ == '__main__':
     print(sm.getListaDeSites())
-    CVM.run()
+    #CVM.run()
+    BCB.run()

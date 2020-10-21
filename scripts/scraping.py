@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 from urllib.request import urlopen
 import requests
 
-
 '''
 IDEIA:
     como cada site tem uma estrutura diferente, eu passo o endereco de cada url com uma função quando for instanciar o objeto scraping.
@@ -20,7 +19,7 @@ class Scraping:
             print('Ooops.. por favor, revise o link informado...')
             self.__bs = None        '''
         self.__bs = BeautifulSoup(urlopen(self.__url), mode)
-    
+
     @property
     def bs(self):
         return self.__bs
@@ -28,9 +27,6 @@ class Scraping:
     @property
     def url(self):
         return self.__url
-
-    def scrap(self):
-        return self.__bs
 
     def downloadPDF(self, pasta, nome_arquivo, url):
         try:
