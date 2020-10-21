@@ -35,7 +35,7 @@ def bcb_gov(bs, url): # uso do selenium é necessário uma vez que as informaç�
             print(f'{i} - {href}')
             pagina = webdriver.PhantomJS()
             pagina.get(url)
-            print(pagina.page_source)
+            print(pagina.page_source) # aqui fica o html das páginas acessadas
             print('\n\n\n')
             pagina.quit()
     driver.quit()
