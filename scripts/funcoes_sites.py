@@ -7,7 +7,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
 
 def cvm_gov(bs, url):
-    '''endereco_principal = 'http://cvm.gov.br'
+    endereco_principal = 'http://cvm.gov.br'
     id = 0
     for link_primario in bs.find_all('a'):
         if ('/legislacao/' in link_primario['href']) or ('/audiencias_publicas/' in link_primario['href']):
@@ -21,27 +21,18 @@ def cvm_gov(bs, url):
                         print(f'{id}    ->    {address}')
                 except KeyError:
                     pass
-    '''
-    from os import listdir
-    from os.path import isfile, join
-    from PIL import Image
-    from pdf2image import convert_from_path
-    import pytesseract
-    path = './pdfs/'
-    files = [f for f in listdir(path) if isfile(join(path, f))]
-    for f in files:
-        print(path+f)
-        doc = convert_from_path(path+f)
-        for page_number, page_data in enumerate(doc):
-            txt = pytesseract.image_to_string(Image.fromarray(page_data), lang='por').encode("utf-8")
-            print(txt)
+    print(pdfs_para_textos('./pdfs/', 'imagens_temporarias'))
 
 
+# ainda não consigo obter o texto das tags....
 def bcb_gov(bs, url): # uso do selenium é necessário uma vez que as informações desejadas do site são exibidas após o carregamento do javascript (usam angular js, as informações necessárias estão na tag <app-root>)
     driver = webdriver.PhantomJS()
     driver.get(url)
     i=0
     links = driver.find_elements_by_tag_name('a')
+
+    paragrafos = []
+
     for link in links:
         href = link.get_attribute('href')
         if href != None and 'estabilidadefinanceira/exibenormativo?' in href:
@@ -49,11 +40,16 @@ def bcb_gov(bs, url): # uso do selenium é necessário uma vez que as informaç�
             print(f'{i} - {href}')
             pagina = webdriver.PhantomJS()
             pagina.get(url)
-            #paragrafos = pagina.find_elements_by_tag_name('p')
-            #for p in paragrafos:
-            #    print(p.get_attribute('textContent'))
-            print(pagina.page_source)
+            for p in pagina.find_elements_by_tag_name('p'):
+                try:
+                    paragrafos.append(p.text)
+                except StaleElementReferenceException:
+                    pass
+                except NoSuchElementException:
+                    pass
+            #print(pagina.page_source)
             pagina.quit()
+    print(paragrafos)
     driver.quit()
 
 def susep_gov(bs, url):
@@ -61,3 +57,31 @@ def susep_gov(bs, url):
     driver = webdriver.PhantomJS()
     driver.get(url)
     print(driver.page_source)
+
+def pdfs_para_textos(path, path_imagens): # retorna uma lista com os textos dos pdfs
+    from os import listdir, remove
+    from os.path import isfile, join
+    from PIL import Image
+    from pdf2image import convert_from_path # poppler needed.... sudo apt-get install -y poppler-utils
+    import pytesseract # para usar com portugues: sudo apt-get install tesseract-ocr-por
+    files = [f for f in listdir(path) if isfile(join(path, f))]
+    textos = []
+    for f in files:
+        print(path+f)
+        nome = f[:-4]
+        try:
+            imagens = convert_from_path(path+f)
+        except Exception:
+            print(f"Houve um problema ao tentar ler o arquivo: {path+f}")
+            continue
+        i=0
+        for imagem in imagens:
+            imagem.save(f'{path}/{path_imagens}/{nome}({i}).jpg', 'JPEG')
+            i+=1
+        txt = ""
+        for j in range(0, i):
+            arquivo = f'{path}/{path_imagens}/{nome}({j}).jpg'
+            txt += pytesseract.image_to_string(Image.open(arquivo), lang='por')
+            remove(arquivo)
+        textos.append(txt)
+    return textos

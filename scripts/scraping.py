@@ -32,7 +32,7 @@ class Scraping:
         try:
             with open(f'{pasta}/{nome_arquivo}.pdf', 'wb') as f:
                 f.write(requests.get(url, stream=True).content)
-            print('Arquivo salvo com sucesso!')
+            #print('Arquivo salvo com sucesso!')
         except Exception:
             return None
         
