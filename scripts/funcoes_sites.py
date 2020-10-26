@@ -5,6 +5,10 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
+from InterpretadorDeTexto import InterpretadorDeTextos
+
+__interpretador = InterpretadorDeTextos()
+InterpretadorDeTextos.downloadDependenciasNltk()
 
 def cvm_gov(bs, url):
     endereco_principal = 'http://cvm.gov.br'
@@ -21,7 +25,10 @@ def cvm_gov(bs, url):
                         print(f'{id}    ->    {address}')
                 except KeyError:
                     pass
-    print(pdfs_para_textos('./pdfs/', 'imagens_temporarias'))
+    for txt in pdfs_para_textos('./pdfs/', 'imagens_temporarias'):
+        print('resumindo...')
+        print(__interpretador.resumir(txt))
+
 
 
 # ainda não consigo obter o texto das tags....

@@ -2,7 +2,7 @@
 
 from SiteManager import SiteManager
 from scraping import Scraping
-from funcoes_sites import *
+from funcoes_sites import cvm_gov, bcb_gov, susep_gov
 from threading import Thread
 
 sm = SiteManager()
@@ -26,5 +26,5 @@ if __name__ == '__main__':
     #BCB.run()
     #SUSEP.run()
     
-    #Thread(target=CVM.run).start()
-    Thread(target=BCB.run).start()
+    Thread(target=CVM.run).start()
+    #Thread(target=BCB.run).start()
