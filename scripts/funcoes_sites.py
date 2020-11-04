@@ -11,7 +11,7 @@ __interpretador = InterpretadorDeTextos()
 InterpretadorDeTextos.downloadDependenciasNltk()
 
 def cvm_gov(bs, url):
-    endereco_principal = 'http://cvm.gov.br'
+    endereco_principal = 'Www.cvm.gov.br' # primeiro W é maiúsculo
     id = 0
     for link_primario in bs.find_all('a'):
         if ('/legislacao/' in link_primario['href']) or ('/audiencias_publicas/' in link_primario['href']):
@@ -25,9 +25,24 @@ def cvm_gov(bs, url):
                         print(f'{id}    ->    {address}')
                 except KeyError:
                     pass
-    for txt in pdfs_para_textos('./pdfs/', 'imagens_temporarias'):
-        print('resumindo...')
-        print(__interpretador.resumir(txt))
+    for txt in pdfs_para_textos('./pdfs/', 'imagens_temporarias'): # melhorar essa parte do código...
+        '''# encontra o título e data
+        local_endereco_principal = txt.find(endereco_principal)
+        titulo_com_data = txt[local_endereco_principal+2:txt[local_endereco_principal:].find('\n')]
+        # a linha acima é necessária para encontrar a quebra de linha após o título e não antes...
+        print(titulo_com_data)'''
+        # encontra intervavo do conteudo principal
+        if txt.find('Atenciosamente') != -1:
+            txt = txt[txt.find('Assunto:'):txt.find('Atenciosamente')]
+        elif txt.find('Assinado eletronicamente') != -1:
+            txt = txt[txt.find('Assunto:'):txt.find('Assinado eletronicamente')]
+        else:
+            txt = txt[txt.find('Assunto:')]
+        '''print('O TEXTO REAL:')
+        print(txt)
+        print('O RESUMO:')
+        print(__interpretador.resumir(txt, porcentagem=35))
+        print('\n\n\n')'''
 
 
 
@@ -41,6 +56,48 @@ def bcb_gov(bs, url): # uso do selenium é necessário uma vez que as informaç�
     paragrafos = []
 
     for link in links:
+        titulo = link.text
+        href="https://www.bcb.gov.br/api/conteudo/app/normativos/exibenormativo?p1="
+        prosseguir = False
+        if 'Comunicado' in titulo:
+            try:
+                #print(titulo)
+                numero_comunicado = titulo[14:titulo.index(",")].replace(".", "")
+                #print(numero_comunicado)
+                href=f"https://www.bcb.gov.br/api/conteudo/app/normativos/exibeoutrasnormas?p1=COMUNICADO&p2={numero_comunicado}"
+                prosseguir=True
+            except ValueError:
+                pass
+        elif 'Resolução' in titulo:
+            try:
+                numero_resolucao = titulo[17:]
+                numero_resolucao = numero_resolucao[0:numero_resolucao.index(",")]
+                #print(titulo)
+                #print(numero_resolucao)
+                href+=f"Resolução%20BCB&p2={numero_resolucao}"
+                prosseguir=True
+            except ValueError:
+                pass
+        elif 'Instrução Normativa' in titulo:
+            try:
+                numero_inormativa = titulo[27:]
+                numero_inormativa = numero_inormativa[0:numero_inormativa.index(",")]
+                #print(titulo)
+                #print(numero_inormativa)
+                href+=f"Instrução%20Normativa%20BCB&p2={numero_inormativa}"
+                prosseguir=True
+            except ValueError:
+                pass
+        
+        if prosseguir:
+            pagina = webdriver.PhantomJS()
+            pagina.get(href)
+            texto = pagina.find_element_by_tag_name('pre').text
+            print(href)
+            texto_div = texto[texto.index("<"):]
+            print(texto_div)
+
+    '''for link in links:
         href = link.get_attribute('href')
         if href != None and 'estabilidadefinanceira/exibenormativo?' in href:
             i+=1
@@ -57,7 +114,7 @@ def bcb_gov(bs, url): # uso do selenium é necessário uma vez que as informaç�
             #print(pagina.page_source)
             pagina.quit()
     print(paragrafos)
-    driver.quit()
+    driver.quit()'''
 
 def susep_gov(bs, url):
     #print(bs.prettify())

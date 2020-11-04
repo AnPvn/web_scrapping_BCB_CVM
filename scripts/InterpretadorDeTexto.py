@@ -13,36 +13,39 @@ class InterpretadorDeTextos():
         download('punkt')
 
     def resumir(self, texto, porcentagem=30):
-        frases = sent_tokenize(texto) # separar o texto em frases
-        palavras = word_tokenize(texto) # separar as frases em palavras
-        # clean:
-        stops = stopwords.words(self.lang)
-        stops.extend(list(punctuation))
-        words_minusculo = [w.lower() for w in palavras if w not in stops]
-        # analiza a frequencia das palavras:
-        freq_palavras = {}
-        for w in words_minusculo:
-            if w not in freq_palavras.keys():
-                freq_palavras[w] = 1
-                continue
-            freq_palavras[w] += 1
-        max_freq = max(freq_palavras.values())
-        for w in freq_palavras.keys():
-            freq_palavras[w] = freq_palavras[w]/max_freq
-        # analiza frequencias nas frases -> média ponderada
-        pesos_frases = {}
-        for f in frases:
-            for p in freq_palavras.keys():
-                if p in f.lower() and f in pesos_frases:
-                    pesos_frases[f] += freq_palavras[p]
+        try:
+            frases = sent_tokenize(texto) # separar o texto em frases
+            palavras = word_tokenize(texto) # separar as frases em palavras
+            # clean:
+            stops = stopwords.words(self.lang)
+            stops.extend(list(punctuation))
+            words_minusculo = [w.lower() for w in palavras if w not in stops]
+            # analiza a frequencia das palavras:
+            freq_palavras = {}
+            for w in words_minusculo:
+                if w not in freq_palavras.keys():
+                    freq_palavras[w] = 1
                     continue
-                pesos_frases[f] = freq_palavras[p]
-        # obtem os X por cento maiores candidatos
-        r = nlargest(int(len(pesos_frases)*(porcentagem/100)), pesos_frases, key=pesos_frases.get)
-        resumo = ''
-        for a in r:
-            resumo+=a
-        return resumo
+                freq_palavras[w] += 1
+            max_freq = max(freq_palavras.values())
+            for w in freq_palavras.keys():
+                freq_palavras[w] = freq_palavras[w]/max_freq
+            # analiza frequencias nas frases -> média ponderada
+            pesos_frases = {}
+            for f in frases:
+                for p in freq_palavras.keys():
+                    if p in f.lower() and f in pesos_frases:
+                        pesos_frases[f] += freq_palavras[p]
+                        continue
+                    pesos_frases[f] = freq_palavras[p]
+            # obtem os X por cento maiores candidatos
+            r = nlargest(int(len(pesos_frases)*(porcentagem/100)), pesos_frases, key=pesos_frases.get)
+            resumo = ''
+            for a in r:
+                resumo+=a
+            return resumo
+        except Exception:
+            return "Houve um erro ao resumir esse texto..."
 
 if __name__ == "__main__":
     interpretador = InterpretadorDeTextos()

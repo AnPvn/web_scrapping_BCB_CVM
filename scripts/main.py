@@ -26,5 +26,5 @@ if __name__ == '__main__':
     #BCB.run()
     #SUSEP.run()
     
-    Thread(target=CVM.run).start()
-    #Thread(target=BCB.run).start()
+    #Thread(target=CVM.run).start()
+    Thread(target=BCB.run).start()
